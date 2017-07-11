@@ -1,3 +1,5 @@
+import boto3
+
 class Site:
     """ A class representing a VITA tax prep location. It is managed by a Site Coordinator. """
 
@@ -9,9 +11,8 @@ class Site:
     availability_status = 'green'
 
     @staticmethod
-    def find(name)
+    def find(name):
         """ Look up the Site in the database """
-        # TODO: implement Site.find
         dynamodb = boto3.resource('dynamodb')
         table = dynamodb.Table('vita-sites')
         response = table.get_item(
@@ -20,14 +21,55 @@ class Site:
             }
         )
         item = response['Item']
-        print item
+        site = Site()
+        site.name = item['site-name']
+        site.address = item['address']
+        site.hours = item['hours']
+        site.is_open = item['is_open']
+        site.availability_status = item['availability_status']
+        return site
     
     @staticmethod
-    def all
+    def all():
         """ Look up all Sites in the database """
-        # TODO: implement Site.all
+        sites = []
+        dynamodb = boto3.resource('dynamodb')
+        response = dynamodb.Table('vita-sites').scan()
+        for item in response['Items']:
+            site = Site()
+            site.name = item['site-name']
+            site.address = item['address']
+            site.hours = item['hours']
+            site.is_open = item['is_open']
+            site.availability_status = item['availability_status']
+            sites.append(site)
+        
+        return sites
 
-    def save
+    def save(self):
         """ Save all fields to the database """
-        # TODO: implement Site#save
+        dynamodb = boto3.resource('dynamodb')
+        table = dynamodb.Table('vita-sites')
+        table.put_item(
+            Item = {
+                'site-name': self.name,
+                'address': self.address,
+                'hours': self.hours,
+                'is_open': self.is_open,
+                'availability_status': self.availability_status,
+            }
+        )
+
+        return True
+
+    def delete(self):
+        dynamodb = boto3.resource('dynamodb')
+        table = dynamodb.Table('vita-sites')
+        table.delete_item(
+            Key = {
+                'site-name': self.name
+            }
+        )
+        return True
+
     
