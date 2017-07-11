@@ -1,4 +1,5 @@
 import boto3
+import json
 
 class Site:
     """ A class representing a VITA tax prep location. It is managed by a Site Coordinator. """
@@ -72,4 +73,5 @@ class Site:
         )
         return True
 
-    
+    def to_json(self):
+        return json.dumps(self.__dict__)
