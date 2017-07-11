@@ -26,19 +26,33 @@ def lambda_handler(event, context):
     '''
     print("Received event: " + json.dumps(event, indent=2))
 
-    sites = Site.all()
-    print("Got %s sites from Dynamo" % len(sites))
-    sites_json = []
+    response_body = ''
+    response_code = '200'
+    if event['queryStringParameters'] == None:
+        print("Fetching all sites")
+        sites = Site.all()
+        sites_json = []
+        for site in sites:
+            sites_json.append(site.to_json())
+        j = ','.join(sites_json)
+        response_body = "[ " + j + " ]"
+        response_code = '200'
+        
+    elif 'site-name' in event['queryStringParameters']:
+        print("Querying a single site: " + event['queryStringParameters']['site-name'])
+        site = Site.find(event['queryStringParameters']['site-name'])
+        response_body = site.to_json()
+        response_code = '200'
+    else:
+        response_body = '{"error":"bad request"}'
+        response_code = '400'
     
-    for site in sites:
-        sites_json.append(site.to_json())
-
-    j = ','.join(sites_json)
-    j = "[ " + j + " ]"
-    print ("Compiles Response: " + j)
+    print ("Compiled Response: " + response_body)
+    print ("Response Code: " + response_code)
+    
     return {
-        'statusCode': '200',
-        'body': j,
+        'statusCode': response_code,
+        'body': response_body,
         'headers': {
             'Content-Type': 'application/json',
         },
