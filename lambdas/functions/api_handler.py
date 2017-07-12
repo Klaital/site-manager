@@ -43,6 +43,7 @@ class LambdaApiHandler:
                 j = ','.join(sites_json)
                 response_body = "[ " + j + " ]"
                 response_code = '200'
+                print("Compiled response: " + response_code + " : " + response_body)
             else:
                 # Fetch single site
                 print("Querying a single site: " + site_name)
@@ -103,7 +104,7 @@ class LambdaApiHandler:
         return {
             'statusCode': response_code,
             'body': response_body,
-            'header': {
+            'headers': {
                 'Content-Type': 'application/json'
             },
         }
@@ -115,7 +116,7 @@ class LambdaApiHandler:
         return {
             'body': response_body,
             'statusCode': response_code,
-            'header': {
+            'headers': {
                 'Content-Type': 'application/json'
             },
         }
@@ -127,7 +128,7 @@ class LambdaApiHandler:
         return {
             'body': response_body,
             'statusCode': response_code,
-            'header': {
+            'headers': {
                 'Content-Type': 'application/json'
             },
         }
@@ -142,7 +143,9 @@ def lambda_handler(event, context):
     
     if event['resource'].startswith('/site'):
         """ Handle Site management APIs """
-        return LambdaApiHandler.site_apis(event)
+        response = LambdaApiHandler.site_apis(event)
+        print ("API Handler returned:" + json.dumps(response))
+        return response
     elif event['resource'].startswith('/user'):
         """ Handle User management APIs """
         return LambdaApiHandler.user_apis(event)
