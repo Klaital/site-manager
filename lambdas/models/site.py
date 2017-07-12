@@ -12,6 +12,22 @@ class Site:
     availability_status = 'green'
 
     @staticmethod
+    def from_dict(dictionary):
+        """ Create a Site object from a data dictionary """
+        site = Site()
+        site.name = dictionary['name']
+        site.address = dictionary['address']
+        site.availability_status = dictionary['availability_status']
+        site.hours = dictionary['hours']
+        site.is_open = dictionary['is_open']
+
+        # Validate required fields
+        if site.name == None:
+            return None
+
+        return site
+
+    @staticmethod
     def find(name):
         """ Look up the Site in the database """
         dynamodb = boto3.resource('dynamodb')
@@ -21,14 +37,18 @@ class Site:
                 'site-name': name
             }
         )
-        item = response['Item']
-        site = Site()
-        site.name = item['site-name']
-        site.address = item['address']
-        site.hours = item['hours']
-        site.is_open = item['is_open']
-        site.availability_status = item['availability_status']
-        return site
+        
+        if 'Item' in response:
+            item = response['Item']
+            site = Site()
+            site.name = item['site-name']
+            site.address = item['address']
+            site.hours = item['hours']
+            site.is_open = item['is_open']
+            site.availability_status = item['availability_status']
+            return site
+        else:
+            return None
     
     @staticmethod
     def all():
