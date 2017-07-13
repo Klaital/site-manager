@@ -1,0 +1,24 @@
+<html>
+    <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="./sites.js"></script>
+        <script id="hidden-site-template" type="text/x-custom-template">
+            <div class="site-description">
+                <h3 id="name"></h3>
+                <ul>
+                    <li>Address: <span id="address"></span></li>
+                    <li>Usual Hours: <span id="hours"></span></li>
+                    <li>Currently Open? <span id="is_open"></span></li>
+                    <li>Availability Status: <span id="availability_status"></span></li>
+                </ul>
+            </div>
+        </script>
+    </head>
+    <body>
+        <h1>Sites List</h1>
+        <div id="content">
+            <div id="sites-list">
+            </div>
+        </div>
+    </body>
+</html>
